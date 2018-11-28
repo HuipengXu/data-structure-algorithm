@@ -43,12 +43,12 @@ def select_sort(nums: list):
 # 归并排序
 def merge_sort0(nums: list):
     length = len(nums)
-    def merge_sort_part(nums: list, end: int):
+    def merge_sort_c(nums: list, end: int):
         if end == 1:
             return nums
         median = end // 2
-        first_half = merge_sort_part(nums[:median], len(nums[:median]))
-        second_half = merge_sort_part(nums[median:], len(nums[median:]))
+        first_half = merge_sort_c(nums[:median], len(nums[:median]))
+        second_half = merge_sort_c(nums[median:], len(nums[median:]))
         return merge(first_half, second_half)
     def merge(first: list, second: list):
         merge_nums = []
@@ -62,15 +62,15 @@ def merge_sort0(nums: list):
         else:
             merge_nums.extend(second)
         return merge_nums
-    return merge_sort_part(nums, length)
+    return merge_sort_c(nums, length)
 
 # 归并排序, 利用下标
 def merge_sort1(nums: list):
-    def merge_sort_part(nums: list, p: int, r: int):
+    def merge_sort_c(nums: list, p: int, r: int):
         if (r - p) > 1 :
             q = p + (r - p) // 2
-            merge_sort_part(nums, p, q)
-            merge_sort_part(nums, q, r)
+            merge_sort_c(nums, p, q)
+            merge_sort_c(nums, q, r)
             merge(nums, p, q, r)
     def merge(nums: list, p: int, q: int, r: int):
         j, k = p, q
@@ -91,8 +91,50 @@ def merge_sort1(nums: list):
             start += 1
             i += 1
         nums[p: r] = tmp
-    merge_sort_part(nums, 0, len(nums))
-        
+    merge_sort_c(nums, 0, len(nums))
+
+# 稳定非原地
+def quick_sort0(nums: list):
+    def partition(nums: list, p: int, r: int):
+        pivot = nums[r-1]
+        tmp_first = []
+        tmp_second = []
+        tmp_equal = []
+        for i in range(p, r):
+            if nums[i] < pivot:
+                tmp_first.append(nums[i])
+            elif nums[i] == pivot:
+                tmp_equal.append(nums[i])
+            else:
+                tmp_second.append(nums[i])
+        tmp_first.extend(tmp_equal)
+        tmp_first.extend(tmp_second)
+        nums[p: r] = tmp_first
+        pivot_index = nums.index(pivot)
+        return pivot_index
+    def quick_sort_c(nums: list, p: int, r: int):
+        if (r - p) > 1:
+            q = partition(nums, p, r)
+            quick_sort_c(nums, p, q)
+            quick_sort_c(nums, q+1, r)
+    quick_sort_c(nums, 0, len(nums))
+
+# 非稳定原地
+def quick_sort1(nums: list):
+    def partition(nums: list, p: int, r: int):
+        pivot = nums[r-1]
+        i = p
+        for j in range(p, r):
+            if nums[j] <= pivot:
+                nums[j], nums[i] = nums[i], nums[j]
+                i += 1
+        return i - 1
+    def quick_sort_c(nums: list, p: int, r: int):
+        if (r - p) > 1:
+            q = partition(nums, p, r)
+            quick_sort_c(nums, p, q)
+            quick_sort_c(nums, q+1, r)
+    quick_sort_c(nums, 0, len(nums))
                 
 if __name__ == "__main__":
     # a = [i for i in range(9999, -1, -1)]
@@ -102,6 +144,6 @@ if __name__ == "__main__":
     # end = time.clock()
     # print(end - start)
     # print(a[:5])
-    test = [3, 1, 4, 5, 3, 6, 8]
-    merge_sort1(test)
+    test = [2, 4, 1, 5, 1, 9, 5, 0]
+    quick_sort1(test)
     print(test)
