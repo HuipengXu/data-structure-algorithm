@@ -135,6 +135,31 @@ def quick_sort1(nums: list):
             quick_sort_c(nums, p, q)
             quick_sort_c(nums, q+1, r)
     quick_sort_c(nums, 0, len(nums))
+
+# 利用分治求无序数组中第 K 大元素
+def k_max(nums: list, k: int):
+    if k > len(nums) or k <=0:
+        return None
+    def partition(nums: list, p: int, r: int):
+        pivot = nums[r-1]
+        i = p
+        for j in range(p, r):
+            if nums[j] >= pivot:
+                nums[j], nums[i] = nums[i], nums[j]
+                i += 1
+        return i
+    p = 0
+    r = len(nums)
+    while True:
+        q = partition(nums, p, r)
+        if q == k:
+            return nums[q-1]
+        elif q > k:
+            p = 0
+            r = q - 1
+        else:
+            p = q
+            r = len(nums)
                 
 if __name__ == "__main__":
     # a = [i for i in range(9999, -1, -1)]
@@ -145,5 +170,4 @@ if __name__ == "__main__":
     # print(end - start)
     # print(a[:5])
     test = [2, 4, 1, 5, 1, 9, 5, 0]
-    quick_sort1(test)
-    print(test)
+    print(k_max(test, 1))
