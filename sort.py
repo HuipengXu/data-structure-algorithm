@@ -68,7 +68,7 @@ def merge_sort0(nums: list):
 def merge_sort1(nums: list):
     def merge_sort_c(nums: list, p: int, r: int):
         if (r - p) > 1 :
-            q = p + (r - p) // 2
+            q = p + ((r - p) >> 2)
             merge_sort_c(nums, p, q)
             merge_sort_c(nums, q, r)
             merge(nums, p, q, r)
@@ -160,14 +160,48 @@ def k_max(nums: list, k: int):
         else:
             p = q
             r = len(nums)
+
+# 桶排序
+def bucket_sort(nums: list, m: int):
+    # 找到最大值和最小值确定区间
+    if not nums:
+        return None
+    if m < 1:
+        raise ValueError('m should be greater than 1')
+    maximum, minimum = nums[0], nums[0]
+    for i in nums:
+        if maximum < i:
+            maximum = i
+        if minimum > i:
+            minimum = i
+    interval = (maximum - minimum) / m
+    buckets = [[] for _ in range(m)]
+    # 分桶
+    for i in nums:
+        if i >= minimum and i < minimum + interval:
+            buckets[0].append(i)
+        elif i <= maximum and i >= (maximum - interval):
+            buckets[-1].append(i)
+        else:
+            for j in range(1, m):
+                if i >= j * interval and i < (j + 1) * interval:
+                    buckets[j].append(i)
+                    break
+    # 合并每个桶
+    k = 0
+    for bucket in buckets:
+        length = len(bucket)
+        quick_sort1(bucket)
+        nums[k: k+length] = bucket
+        k += length
+    return nums
                 
 if __name__ == "__main__":
-    # a = [i for i in range(9999, -1, -1)]
+    a = [i for i in range(9999, -1, -1)]
     # import time
     # start = time.clock()
     # merge_sort1(a)
     # end = time.clock()
     # print(end - start)
     # print(a[:5])
-    test = [2, 4, 1, 5, 1, 9, 5, 0]
-    print(k_max(test, 1))
+    print(bucket_sort(a, 1000)[-10:])
