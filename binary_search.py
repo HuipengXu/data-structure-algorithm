@@ -159,9 +159,33 @@ def binary_search4_recursion(nums: list, a):
     low, high = 0, len(nums) - 1
     return recursion(nums, low, high, a)
 
+# 循环有序数组查找给定值元素
+def binary_recycle_search0(nums: list, a):
+    """
+    找到分界下标
+    """
+    pivot = 0
+    for i in range(len(nums)-1):
+        if nums[i] > nums[i+1]:
+            pivot = i
+            break
+    if nums[0] > a:
+        low, high = pivot+1, len(nums)-1
+    else:
+        low, high = 0, pivot
+    while low <= high:
+        mid = low + ((high - low) >> 1)
+        if nums[mid] == a:
+            return mid
+        elif nums[mid] > a:
+            high = mid - 1
+        else:
+            low = mid + 1
+    return None
+
 
 if __name__ == "__main__":
-    a = [3, 2, 4, 1, 9, 7, 2, 3]
-    a.sort()
-    print(a)
-    print(binary_search3_loop(a, -1))
+    a = [4, 5, 6, 1, 2, 3]
+    b = [4, 5, 6, 7, 1, 2, 3]
+    c = [4, 6, 7, 1, 2, 3, 4]
+    print(binary_recycle_search0(a, 0))
