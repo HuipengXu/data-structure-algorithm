@@ -68,7 +68,7 @@ def merge_sort0(nums: list):
 def merge_sort1(nums: list):
     def merge_sort_c(nums: list, p: int, r: int):
         if (r - p) > 1 :
-            q = p + ((r - p) >> 2)
+            q = p + ((r - p) >> 1)
             merge_sort_c(nums, p, q)
             merge_sort_c(nums, q, r)
             merge(nums, p, q, r)
@@ -80,17 +80,13 @@ def merge_sort1(nums: list):
             if nums[j] <= nums[k]:
                 tmp[i] = nums[j]
                 j += 1
-                i += 1
             else:
                 tmp[i] = nums[k]
                 k += 1
-                i += 1
-        start, end = (j, q) if j < q else (k, r)
-        while start < end:
-            tmp[i] = nums[start]
-            start += 1
             i += 1
-        nums[p: r] = tmp
+        start, end = (j, q) if j < q else (k, r)
+        tmp[i:] = nums[start:end]
+        nums[p:r] = tmp[:]
     merge_sort_c(nums, 0, len(nums))
 
 # 稳定非原地
@@ -197,11 +193,12 @@ def bucket_sort(nums: list, m: int):
     return nums
                 
 if __name__ == "__main__":
-    a = [i for i in range(9999, -1, -1)]
+    a = [2, 8, 1, 0, 1, 7, 20]
     # import time
     # start = time.clock()
     # merge_sort1(a)
     # end = time.clock()
     # print(end - start)
     # print(a[:5])
-    print(bucket_sort(a, 1000)[-10:])
+    merge_sort1(a)
+    print(a)
