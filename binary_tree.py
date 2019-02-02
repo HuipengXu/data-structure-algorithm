@@ -18,7 +18,7 @@ class Node:
         return "<Binary Tree Node: %.2f>" % self.val
 
 
-class BinaryTree:
+class BinarySearchTree:
     """
     链式二叉查找树，不存在重复节点
     """
@@ -64,7 +64,7 @@ class BinaryTree:
 
 
 if __name__ == "__main__":
-    bt = BinaryTree()
-    # for i in [1, 6, 0, 2, 5, 7]:
-    #     bt.insert(i)
-    print(bt.pre_order())
+    bst = BinarySearchTree()
+    for i in [1, 6, 0, 2, 5, 7]:
+        bst.insert(i)
+    print(bst.pre_order())
