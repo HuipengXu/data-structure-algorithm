@@ -103,7 +103,7 @@ class BinarySearchTree:
         nodes = self._find(val)
         if len(nodes) == 0: raise ValueError('%d is not in binary search tree' % val)
 
-        for parent, _, node in nodes[::-1 ]:
+        for parent, _, node in nodes[::-1]:
             # 待删除节点有两个子节点
             if node.left and node.right:
                 min_child = node.right
@@ -188,11 +188,42 @@ class BinarySearchTree:
         recurse(self.root)
         return nodes_list
 
+    def get_height(self):
+        """
+        深度遍历
+        """
+
+        def _get_height(root):
+            if root is None:
+                return -1
+            return max(_get_height(root.left), _get_height(root.right)) + 1
+
+        height = _get_height(self.root)
+        return height
+
+    def get_height_(self):
+        """
+        广度遍历
+        """
+        current = [self.root]
+        next_ = []
+        height = -1
+        while current:
+            node = current.pop(0)
+            if node.left:
+                next_.append(node.left)
+            if node.right:
+                next_.append(node.right)
+            if len(current) == 0:
+                height += 1
+                current, next_ = next_, []
+        return height
+
 
 if __name__ == "__main__":
     bst = BinarySearchTree()
-    arr1 = [33, 16, 50, 13, 18, 34, 58, 34, 15, 17, 25, 51, 66, 19, 27, 55]
+    arr1 = [33, 16, 50, 13, 18, 34, 58, 15, 17, 25, 51, 66, 19, 27, 55]
     arr2 = [10, 9, 8, 7, 6, 5]
-    for i in arr2:
+    for i in arr1:
         bst.insert(i)
-    print(bst.pre_order_recursive())
+    print(bst.get_height_())
