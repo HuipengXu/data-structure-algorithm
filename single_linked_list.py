@@ -50,6 +50,7 @@ class SingleLinkedList:
             return None
 
         if index == 0:
+            current_node_val = self.head.val
             self.head = self.head._next
         else:
             node = self.head
@@ -122,7 +123,7 @@ class SingleLinkedList:
         return  
 
     def __repr__(self):
-        return "<SingleLinkedList: %d>" % self.length
+        return "<SingleLinkedList: %d>" % self.head.val
 
     def __len__(self):
         return self.length
@@ -138,11 +139,12 @@ if __name__ == "__main__":
     sll = SingleLinkedList()
     for i in range(10):
         sll.append(i)
-    print(sll.get_index(14))
-    print('---------------length---------------')
-    print(len(sll))
-    print('---------------all_val---------------')
-    sll.print_all()
+    print(sll.pop())
+    # print(sll.get_index(14))
+    # print('---------------length---------------')
+    # print(len(sll))
+    # print('---------------all_val---------------')
+    # sll.print_all()
 
     
     
