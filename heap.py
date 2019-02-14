@@ -38,18 +38,22 @@ class BigTopHeap:
         self.heap.append(val)
         idx = len(self.heap) - 1
         while True:
-            parent_idx = (idx - 1) // 2 if idx % 2 else idx // 2
-            if self.heap[parent_idx] > self.heap[idx]:
+            parent_idx = idx // 2
+            if parent_idx == 0 or self.heap[parent_idx] > self.heap[idx]:
                 break
             self.heap[idx], self.heap[parent_idx] = self.heap[parent_idx], self.heap[idx]
             idx = parent_idx
+        self.length += 1
 
     def _delete_top(self, end: int):
         self.heap[1], self.heap[end] = self.heap[end], self.heap[1]
         self._one_step_heapify(1, end)
 
     def delete_top(self):
-        self._delete_top(self.length)
+        if self.length == 1:
+            return None
+        self._delete_top(self.length - 1)
+        self.length -= 1
         return self.heap.pop()
 
     def sort(self):
@@ -62,5 +66,6 @@ if __name__ == "__main__":
     a = [7, 5, 19, 8, 4, 1, 20, 13, 16]
     bth = BigTopHeap(a)
     # print(bth.sort())
-    bth.insert(17)
+    for i in range(10):
+        print(bth.delete_top())
     print(bth.heap)
