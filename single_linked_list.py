@@ -12,7 +12,7 @@ class Node:
 class SingleLinkedList:
 
     def __init__(self, head=None):
-        self.head = head
+        self.head = Node(head)
         self.length = 0
 
     def is_empty(self):
@@ -24,7 +24,7 @@ class SingleLinkedList:
         else:
             new_node = Node(val_or_node)
 
-        if not self.head:
+        if self.head.val is None:
             self.head = new_node
         else:
             node = self.head
