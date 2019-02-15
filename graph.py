@@ -140,6 +140,59 @@ class Graph:
         path.append(p)
         return path[::-1]
 
+    def n_degree_friends0(self, center: int, n: int):
+        """
+        寻找 n 度好友，基于广度优先搜索
+        _count 记录当前度的好友个数
+        count 用于记录当前度好友个数的消耗情况，同时用来判断度数的增加
+        """
+        if n == 0: return [center]
+        if center >= self.vertex_nums: return None
+        degree = _count = 0
+        count = 1
+        queue = [center]
+        visited = [0] * self.vertex_nums
+        visited[center] = 1
+        while queue:
+            vertex = queue.pop(0)
+            count -= 1
+            node = self.adjacency_list[vertex].head
+            while node:
+                v = node.val
+                if visited[v] == 0:
+                    _count += 1
+                    queue.append(v)
+                    visited[v] = 1
+                node = node._next
+            if count == 0:
+                degree += 1
+                count, _count = _count, 0
+            if degree == n: return queue
+        return None
+
+    def n_degree_friends1(self, center: int, n: int):
+        """
+        寻找 n 度好友，基于广度优先搜索
+        在广度优先的基础上添加一个数组记录与起始顶点的距离
+        """
+        visited = [0] * self.vertex_nums
+        visited[center] = 1
+        distance = [0] * self.vertex_nums
+        queue = [center]
+        while queue:
+            vertex = queue.pop(0)
+            node = self.adjacency_list[vertex].head
+            while node:
+                if visited[node.val] == 0:
+                    v = node.val
+                    distance[v] = distance[vertex] + 1
+                    if n + 1 in distance:
+                        break
+                    visited[v] = 1
+                    queue.append(v)
+                node = node._next
+        return [i for i, d in enumerate(distance) if d == n]
+
 
 if __name__ == "__main__":
     g = Graph(8)
@@ -161,3 +214,7 @@ if __name__ == "__main__":
     print(path1)
     print(path2)
     print(path3)
+    df0 = g.n_degree_friends0(4, 1)
+    df1 = g.n_degree_friends1(4, 1)
+    print(df0)
+    print(df1)
