@@ -105,10 +105,10 @@ def boyer_moore0(s: str, pat: str) -> Optional[int]:
                             flag2 = False
                             break
                 if flag2 and back >= 1: move2 = p_len
-                print('----------------------')
-                print('move1: %d' % move1)
-                print('move2: %d' % move2)
-                print('----------------------')
+                # print('----------------------')
+                # print('move1: %d' % move1)
+                # print('move2: %d' % move2)
+                # print('----------------------')
                 move = max(move1, move2)
                 i += (move + back)
                 i = min(s_len - 1, i)
@@ -163,23 +163,63 @@ def boyer_moore1(s: str, pat: str) -> Optional[int]:
             if j < p_len - 1:
                 move2 = move_by_gs(suffix, prefix, p_len, j)
             move = max(move1, move2)
-            print('----------------------')
-            print('move1: %d' % move1)
-            print('move2: %d' % move2)
-            print('----------------------')
+            # print('----------------------')
+            # print('move1: %d' % move1)
+            # print('move2: %d' % move2)
+            # print('----------------------')
             i += move
             break
     return None
 
 
+def kmp(s: str, pat: str):
+    p_len, s_len = map(len, [pat, s])
+
+    def get_nexts(pat: str, p_len: int):
+        nexts = [-1] * (p_len - 1)
+        for i in range(1, p_len - 1):
+            k = nexts[i - 1] + 1
+            if pat[k] == pat[i]:
+                nexts[i] = k
+                continue
+            k -= 1
+            flag = True
+            while k >= 0:
+                for j in range(1, k + 1):
+                    if pat[k - j] != pat[i - j]:
+                        flag = False
+                        break
+                if flag and pat[k] == pat[i]:
+                    nexts[i] = k
+                    break
+                k -= 1
+        return nexts
+
+    nexts = get_nexts(pat, p_len)
+    i = j = 0
+    while j < p_len:
+        if i >= s_len: return None
+        if pat[j] == s[i]:
+            i += 1
+            j += 1
+            continue
+        k = nexts[j - 1] if j >= 1 else -1
+        if k == -1 and j == 0: i += 1
+        j = k + 1
+    return i - p_len
+
+
 if __name__ == "__main__":
-    examples = [('sffsdgaaaaa', 'aa'), ('aaaaaaaaaa', 'baaa'), ('abcacabcbcbacabc', 'cbacabc'), ('sdfavfdcsfdfass', 'fdf'),
-                ('abcacabcbcbacabc', 'abacabc'), ('fyjfjyhv', 'yhv'), ('aaaaaaaaaaaaa', 'aab')]
+    examples = [('sffsdgaaaaa', 'aa'), ('aaaaaaaaaa', 'baaa'), ('abcacabcbcbacabc', 'cbacabc'),
+                ('sdfavfdcsfdfass', 'fdf'),
+                ('abcacabcbcbacabc', 'abacabc'), ('fyjfjyhv', 'yhv'), ('aaaaaaaaaaaaa', 'aab'),
+                ('ababaeabacababacd', 'ababacd')]
     for s, pat in examples:
-        # print(brute_force(s, pat))
-        # print(rabin_karp0(s, pat))
-        # print(rabin_karp1(s, pat))
+        print(brute_force(s, pat))
+        print(rabin_karp0(s, pat))
+        print(rabin_karp1(s, pat))
         print(boyer_moore0(s, pat))
-        print('%%%%%%%%%%%%%%%%%')
+        # print('%%%%%%%%%%%%%%%%%')
         print(boyer_moore1(s, pat))
+        print(kmp(s, pat))
         print('*******************')
