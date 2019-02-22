@@ -172,7 +172,7 @@ def boyer_moore1(s: str, pat: str) -> Optional[int]:
     return None
 
 
-def kmp(s: str, pat: str):
+def kmp0(s: str, pat: str):
     p_len, s_len = map(len, [pat, s])
 
     def get_nexts(pat: str, p_len: int):
@@ -204,9 +204,33 @@ def kmp(s: str, pat: str):
             j += 1
             continue
         k = nexts[j - 1] if j >= 1 else -1
-        if k == -1 and j == 0: i += 1
+        if j == 0: i += 1
         j = k + 1
     return i - p_len
+
+
+def kmp1(s: str, pat: str):
+    s_len, p_len = map(len, [s, pat])
+
+    def get_nexts(pat: str, p_len: int):
+        nexts = [-1] * (p_len - 1)
+        k = -1
+        for i in range(1, p_len - 1):
+            while k != -1 and pat[k + 1] != pat[i]:
+                k = nexts[k]
+            if pat[k + 1] == pat[i]: k += 1
+            nexts[i] = k
+        return nexts
+
+    nexts = get_nexts(pat, p_len)
+    j = 0
+    for i in range(s_len):
+        while j > 0 and pat[j] != s[i]:
+            j = nexts[j - 1] + 1
+        if pat[j] == s[i]:
+            j += 1
+        if j == p_len: return i - p_len + 1
+    return None
 
 
 if __name__ == "__main__":
@@ -221,5 +245,6 @@ if __name__ == "__main__":
         print(boyer_moore0(s, pat))
         # print('%%%%%%%%%%%%%%%%%')
         print(boyer_moore1(s, pat))
-        print(kmp(s, pat))
+        print(kmp0(s, pat))
+        print(kmp1(s, pat))
         print('*******************')
