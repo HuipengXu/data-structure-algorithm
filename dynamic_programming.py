@@ -110,12 +110,30 @@ def super_package01_opted(items: list, values: list, w: int):
     return max_val
 
 
+# 薅羊毛
+def gathering_wool(values: list, full_redu_amt: int):
+    states = [0] * 200
+    states[0] = 1
+    min_amt = sum(values)
+    for i in range(len(values)):
+        for j in range(full_redu_amt - 1, -1, -1):
+            if states[j]:
+                amt = j + values[i]
+                if amt >= full_redu_amt and amt < min_amt:
+                    min_amt = amt
+                states[amt] = 1
+    return min_amt
+
+
 if __name__ == "__main__":
-    w = 9
-    items = [2, 2, 4, 6, 3]
-    values = [3, 4, 8, 9, 6]
-    print(package01(items, w))
-    print(package01_opted(items, w))
-    print(super_package01(items, values, w))
-    print(super1_package01(items, values, w))
-    print(super_package01_opted(items, values, w))
+    # w = 9
+    # items = [2, 2, 4, 6, 3]
+    # values = [3, 4, 8, 9, 6]
+    # print(package01(items, w))
+    # print(package01_opted(items, w))
+    # print(super_package01(items, values, w))
+    # print(super1_package01(items, values, w))
+    # print(super_package01_opted(items, values, w))
+    values = [40, 9, 69, 39, 79]
+    full_redu_amt = 100
+    print(gathering_wool(values, full_redu_amt))
