@@ -112,7 +112,14 @@ def super_package01_opted(items: list, values: list, w: int):
 
 # 薅羊毛
 def gathering_wool(values: list, full_redu_amt: int):
-    states = [0] * 200
+    """
+    :param values: 所选所有商品的价格
+    :param full_redu_amt: 满减金额
+    :return: 达到满减要求的最低消费金额
+
+    说明：无法找出具体要买的是哪些商品
+    """
+    states = [0] * sum(values)
     states[0] = 1
     min_amt = sum(values)
     for i in range(len(values)):
@@ -125,15 +132,57 @@ def gathering_wool(values: list, full_redu_amt: int):
     return min_amt
 
 
+def super_gathering_wool(values: list, full_redu_amt: int):
+    items_num = len(values)
+    states_num = sum(values) + 1
+    states = [[0] * states_num for _ in range(items_num)]
+    states[0][0] = 1
+    states[0][values[0]] = 1
+    for i in range(1, items_num):
+        for j in range(states_num):
+            if states[i - 1][j]:
+                # 不买
+                states[i][j] = 1
+                # 买
+                states[i][j + values[i]] = 1
+    min_amt = states_num
+    for k in range(full_redu_amt, states_num):
+        if states[items_num - 1][k]:
+            min_amt = k
+            break
+    purchased = []
+
+    # 回溯拿到所有购买选项
+    def get_purchase_options(amt: int, item: int):
+        if item == 0:
+            if amt != 0 and values[0] == amt:
+                purchased.append(values[0])
+                print(purchased)
+                purchased.pop()
+                return
+            print(purchased)
+            return
+        if states[item - 1][amt]:
+            get_purchase_options(amt, item - 1)
+        if states[item - 1][amt - values[item]]:
+            purchased.append(values[item])
+            get_purchase_options(amt - values[item], item - 1)
+            purchased.pop()
+
+    get_purchase_options(min_amt, items_num - 1)
+    return min_amt
+
+
 if __name__ == "__main__":
-    # w = 9
-    # items = [2, 2, 4, 6, 3]
-    # values = [3, 4, 8, 9, 6]
-    # print(package01(items, w))
-    # print(package01_opted(items, w))
-    # print(super_package01(items, values, w))
-    # print(super1_package01(items, values, w))
-    # print(super_package01_opted(items, values, w))
-    values = [40, 9, 69, 39, 79]
-    full_redu_amt = 100
+    w = 9
+    items = [2, 2, 4, 6, 3]
+    values = [3, 4, 8, 9, 6]
+    print(package01(items, w))
+    print(package01_opted(items, w))
+    print(super_package01(items, values, w))
+    print(super1_package01(items, values, w))
+    print(super_package01_opted(items, values, w))
+    values = [99, 59, 69, 89, 79, 39, 20]
+    full_redu_amt = 200
     print(gathering_wool(values, full_redu_amt))
+    print(super_gathering_wool(values, full_redu_amt))
