@@ -2,6 +2,8 @@
 # @Author  : Xu Huipeng
 # @Blog    : https://brycexxx.github.io/
 
+import sys
+
 """
 对于一组不同重量、不可分割的物品，我们需要选择一些装入背包，在满足背包最大重量限制的前提下，
 背包中物品总重量的最大值是多少呢
@@ -173,16 +175,71 @@ def super_gathering_wool(values: list, full_redu_amt: int):
     return min_amt
 
 
+# 杨辉三角
+# 递推
+def yh_triangle(triangle: list):
+    height, width = len(triangle), len(triangle[0])
+    states = [[sys.maxsize] * width for _ in range(height)]
+    start = [idx for idx in range(width) if triangle[0][idx] != None][0]
+    states[0][start] = triangle[0][start]
+    for i in range(1, height):
+        for j in range(width):
+            if triangle[i][j] != None:
+                left_up = states[i - 1][j - 1] if j - 1 >= 0 else sys.maxsize
+                right_up = states[i - 1][j + 1] if j + 1 < width else sys.maxsize
+                states[i][j] = triangle[i][j] + min(left_up, right_up)
+    min_dist = sys.maxsize
+    for k in range(width):
+        if states[height - 1][k] < min_dist:
+            min_dist = states[height - 1][k]
+    return min_dist
+
+
+# 递归
+def yh_triangle_recur(triangle: list):
+    height, width = len(triangle), len(triangle[0])
+    states = [[sys.maxsize] * width for _ in range(height)]
+
+    def min_dist(i, j):
+        if j < 0 or j >= width or triangle[i][j] is None: return sys.maxsize
+        if i == 0 and j == (width // 2): return triangle[0][width // 2]
+        if states[i][j] != sys.maxsize: return states[i][j]
+
+        left_up = min_dist(i - 1, j - 1)
+        right_up = min_dist(i - 1, j + 1)
+
+        states[i][j] = triangle[i][j] + min(left_up, right_up)
+
+        return states[i][j]
+
+    for j in range(width):
+        if triangle[height - 1][j] != None:
+            min_dist(height - 1, j)
+
+    min_dis = states[height - 1][0]
+    for k in range(1, width):
+        if states[height - 1][k] < min_dis:
+            min_dis = states[height - 1][k]
+    return min_dis
+
+
 if __name__ == "__main__":
-    w = 9
-    items = [2, 2, 4, 6, 3]
-    values = [3, 4, 8, 9, 6]
-    print(package01(items, w))
-    print(package01_opted(items, w))
-    print(super_package01(items, values, w))
-    print(super1_package01(items, values, w))
-    print(super_package01_opted(items, values, w))
-    values = [99, 59, 69, 89, 79, 39, 20]
-    full_redu_amt = 200
-    print(gathering_wool(values, full_redu_amt))
-    print(super_gathering_wool(values, full_redu_amt))
+    # w = 9
+    # items = [2, 2, 4, 6, 3]
+    # values = [3, 4, 8, 9, 6]
+    # print(package01(items, w))
+    # print(package01_opted(items, w))
+    # print(super_package01(items, values, w))
+    # print(super1_package01(items, values, w))
+    # print(super_package01_opted(items, values, w))
+    # values = [99, 59, 69, 89, 79, 39, 20]
+    # full_redu_amt = 200
+    # print(gathering_wool(values, full_redu_amt))
+    # print(super_gathering_wool(values, full_redu_amt))
+    yh = [[None, None, None, None, 5, None, None, None, None],
+          [None, None, None, 7, None, 8, None, None, None],
+          [None, None, 2, None, 3, None, 4, None, None, None],
+          [None, 4, None, 9, None, 6, None, 1, None],
+          [2, None, 7, None, 9, None, 4, None, 5]]
+    print(yh_triangle(yh))
+    print(yh_triangle_recur(yh))
