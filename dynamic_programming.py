@@ -223,6 +223,100 @@ def yh_triangle_recur(triangle: list):
     return min_dis
 
 
+"""
+我们有 3 种不同的硬币，1 元、3 元、5 元，我们要支付 9 元，最少需要 3 个硬币（3 个 3 元的硬币）
+"""
+
+
+# 递推
+def min_coins(coins: list, pay: int):
+    coin_nums = 0
+    states = [0] * (pay + 1)
+    states[0] = 1
+    while True:
+        if states[pay]: return coin_nums
+        for i in range(len(states) - 2, -1, -1):
+            if states[i]:
+                for c in coins:
+                    if i + c < len(states) and states[i + c] == 0:
+                        states[i + c] = 1
+        coin_nums += 1
+
+
+# 递归
+def min_coins_recur(coins: list, pay: int):
+    if pay == 0: return 0
+    min_nums_list = []
+    for c in coins:
+        if pay - c < 0:
+            continue
+        min_nums_list.append(min_coins_recur(coins, pay - c))
+    min_nums = min(min_nums_list) + 1
+    return min_nums
+
+
+# 矩阵左上角到右下角最短距离
+# 回溯
+def matrix_min_dist(matrix: list):
+    height, width = len(matrix), len(matrix[0])
+    dist = 0
+    min_dist = sys.maxsize
+
+    def back_tracking(i: int, j: int, dist: int):
+        nonlocal min_dist
+        dist += matrix[i][j]
+        if i == height - 1 and j == width - 1:
+            if dist < min_dist:
+                min_dist = dist
+            return
+        if i < height - 1:
+            back_tracking(i + 1, j, dist)
+        if j < width - 1:
+            back_tracking(i, j + 1, dist)
+
+    back_tracking(0, 0, dist)
+    return min_dist
+
+
+# 动态规划，递推
+def matrix_min_dist0(matrix: list):
+    height, width = len(matrix), len(matrix[0])
+    states = [[sys.maxsize] * width for _ in range(height)]
+    states[0][0] = matrix[0][0]
+    # 初始化第一行
+    for m in range(1, width):
+        states[0][m] = matrix[0][m] + states[0][m - 1]
+    # 初始化第一列
+    for n in range(1, height):
+        states[n][0] = matrix[n][0] + states[n - 1][0]
+    for i in range(1, height):
+        for j in range(1, width):
+            left = states[i][j - 1] if j - 1 >= 0 else sys.maxsize
+            up = states[i - 1][j] if i - 1 >= 0 else sys.maxsize
+            states[i][j] = matrix[i][j] + min(left, up)
+    return states[height - 1][width - 1]
+
+
+# 动态规划，递归
+def matrix_min_dist1(matrix: list):
+    height, width = len(matrix), len(matrix[0])
+    states = [[0] * width for _ in range(height)]
+
+    def recur(i: int, j: int):
+        if i == 0 and j == 0: return matrix[0][0]
+        if states[i][j] > 0: return states[i][j]
+        left = up = sys.maxsize
+        if j > 0:
+            left = recur(i, j - 1)
+        if i > 0:
+            up = recur(i - 1, j)
+        current = matrix[i][j] + min(left, up)
+        states[i][j] = current
+        return current
+
+    return recur(height - 1, width - 1)
+
+
 if __name__ == "__main__":
     # w = 9
     # items = [2, 2, 4, 6, 3]
@@ -236,10 +330,18 @@ if __name__ == "__main__":
     # full_redu_amt = 200
     # print(gathering_wool(values, full_redu_amt))
     # print(super_gathering_wool(values, full_redu_amt))
-    yh = [[None, None, None, None, 5, None, None, None, None],
-          [None, None, None, 7, None, 8, None, None, None],
-          [None, None, 2, None, 3, None, 4, None, None, None],
-          [None, 4, None, 9, None, 6, None, 1, None],
-          [2, None, 7, None, 9, None, 4, None, 5]]
-    print(yh_triangle(yh))
-    print(yh_triangle_recur(yh))
+    # yh = [[None, None, None, None, 5, None, None, None, None],
+    #       [None, None, None, 7, None, 8, None, None, None],
+    #       [None, None, 2, None, 3, None, 4, None, None, None],
+    #       [None, 4, None, 9, None, 6, None, 1, None],
+    #       [2, None, 7, None, 9, None, 4, None, 5]]
+    # print(yh_triangle(yh))
+    # print(yh_triangle_recur(yh))
+    # coins = [1, 3, 5]
+    # pay = 9
+    # print(min_coins(coins, pay))
+    # print(min_coins_recur(coins, pay))
+    matrix = [[1, 3, 5, 9], [2, 1, 3, 4], [5, 2, 6, 7], [6, 8, 4, 3]]
+    print(matrix_min_dist(matrix))
+    print(matrix_min_dist0(matrix))
+    print(matrix_min_dist1(matrix))
