@@ -6,7 +6,7 @@ class Node:
         self._next = _next
         
     def __repr__(self):
-        return "<Node: %d>" % self.val
+        return "<Node: %s>" % str(self.val)
 
 # 单链表
 class SingleLinkedList:
@@ -123,7 +123,7 @@ class SingleLinkedList:
         return  
 
     def __repr__(self):
-        return "<SingleLinkedList: %d>" % self.head.val
+        return "<SingleLinkedList: %s>" % str(self.head.val)
 
     def __len__(self):
         return self.length
