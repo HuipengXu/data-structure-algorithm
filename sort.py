@@ -1,3 +1,6 @@
+from typing import List
+import random
+
 # 冒泡排序
 def bubble_sort(nums: list):
     if nums:
@@ -118,10 +121,11 @@ def quick_sort0(nums: list):
 # 非稳定原地
 def quick_sort1(nums: list):
     def partition(nums: list, p: int, r: int):
-        pivot = nums[r-1]
+        pivot_idx = random.randint(p, r-1)
+        nums[pivot_idx], nums[r-1] = nums[r-1], nums[pivot_idx]
         i = p
         for j in range(p, r):
-            if nums[j] <= pivot:
+            if nums[j] <= nums[r-1]:
                 nums[j], nums[i] = nums[i], nums[j]
                 i += 1
         return i - 1
@@ -136,26 +140,27 @@ def quick_sort1(nums: list):
 def k_max(nums: list, k: int):
     if k > len(nums) or k <=0:
         return None
-    def partition(nums: list, p: int, r: int):
-        pivot = nums[r-1]
-        i = p
-        for j in range(p, r):
-            if nums[j] >= pivot:
-                nums[j], nums[i] = nums[i], nums[j]
-                i += 1
-        return i
-    p = 0
-    r = len(nums)
+    def partition(nums: List[int], start: int, end: int) -> int:
+        pivot_idx = random.randint(start, end-1)
+        nums[end-1], nums[pivot_idx] = nums[pivot_idx], nums[end-1]
+        j = start
+        for i in range(start, end):
+            if nums[i] >= nums[end-1]:
+                nums[i], nums[j] = nums[j], nums[i]
+                j += 1
+        return j - 1
+
+    start, end = 0, len(nums)
     while True:
-        q = partition(nums, p, r)
-        if q == k:
-            return nums[q-1]
-        elif q > k:
-            p = 0
-            r = q - 1
+        mid = partition(nums, start, end)
+        if k - 1 == mid:
+            return nums[mid]
+        elif k - 1 < mid:
+            start = start
+            end = mid
         else:
-            p = q
-            r = len(nums)
+            start = mid+1
+            end = end
 
 # 桶排序
 def bucket_sort(nums: list, m: int):
