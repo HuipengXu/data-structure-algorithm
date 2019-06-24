@@ -1,7 +1,7 @@
 # @Time    : 2019/2/2 22:11
 # @Author  : Xu Huipeng
 # @Blog    : https://brycexxx.github.io/
-from typing import Optional
+from typing import Optional, List
 
 
 class Node:
@@ -218,6 +218,89 @@ class BinarySearchTree:
                 height += 1
                 current, next_ = next_, []
         return height
+
+# Morris 遍历，O(1) 空间复杂度
+
+# Definition for a binary tree node.
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+def in_order(root: TreeNode) -> None:
+    node = root
+    while node:
+        if not node.left:
+            print(node.val)
+            node = node.right
+        else:
+            prev = node.left
+            while prev.right and prev.right != node:
+                prev = prev.right
+            if prev.right == node:
+                prev.right = None
+                print(node.val)
+                node = node.right
+            else:
+                prev.right = node
+                node = node.left
+
+
+def pre_order(root: TreeNode):
+    node = root
+    while node:
+        if not node.left:
+            print(node.val)
+            node = node.right
+        else:
+            prev = node.left
+            while prev.right and prev.right != node:
+                prev = prev.right
+            if prev.right == node:
+                node = node.right
+                prev.right = None
+            else:
+                print(node.val)
+                prev.right = node
+                node = node.left
+
+def post_order(root: TreeNode):
+    def reverse_print(head: TreeNode, tail: TreeNode) -> None:
+        if head == tail:
+            print(tail.val)
+            return
+        reverse_print(head.right, tail)
+        print(head.val)
+    dummy = TreeNode(-1)
+    dummy.left = root
+    node = dummy
+    while node:
+        if not node.left:
+            node = node.right
+        else:
+            prev = node.left
+            while prev.right and prev.right != node:
+                prev = prev.right
+            if prev.right == None:
+                prev.right = node
+                node = node.left
+            else:
+                reverse_print(node.left, prev)
+                prev.right = None
+                node = node.right
+
+def build_tree(in_order: List[int], post_order: List[int]) -> TreeNode:
+    tree_map = {val: i for i, val in enumerate(in_order)}
+    def dfs(i: int, j: int):
+        if i == j: return
+        val = post_order.pop()
+        idx = tree_map[val]
+        root = TreeNode(val)
+        root.right = dfs(idx+1, j)
+        root.left = dfs(i, idx)
+        return root
+    return dfs(0, len(in_order))
 
 
 if __name__ == "__main__":
